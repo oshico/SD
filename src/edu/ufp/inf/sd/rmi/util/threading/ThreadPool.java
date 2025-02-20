@@ -5,43 +5,30 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * When task creation frequency is high and mean task duration is low
- * use thread pool instead of creating a new thread for each request.
- * 
- * The thread pool size depends on the number of available processors (N)
- * and the nature of the tasks.
- * i) For compute-bounded tasks:
- *      => Thread pool size = N or N+1 threads.
- * ii) For tasks that wait for I/O to complete:
- *      => Thread pool size = N*(1+WT/ST).
- * Use profiling to determine WT (mean waiting time) and ST (mean service time).
+ * ThreadPool class for managing a pool of worker threads.
  */
 public class ThreadPool {
 
-    /** Size of the array/pool of threads */
     private final int poolsize;
-    //
-    /** Array of threads that compete for running Runnable Sessions */
     private final PoolThread[] poolAvailableThreads;
-    /** List of Runnable Sessions that will be picked (one-by-one) in FIFO 
-     * manner by the existing threads */
-    private final LinkedList<Runnable> listRunnableThreads = new LinkedList();
+    private final LinkedList<Runnable> listRunnableThreads = new LinkedList<>();
+    private volatile boolean running = true; // Flag to control execution
 
     /**
-     * Constructor of the pool of threads.
-     * @param nt - number of Threads
+     * Constructor of the thread pool.
+     *
+     * @param nt - number of threads
      */
     public ThreadPool(int nt) {
         this.poolsize = nt;
         poolAvailableThreads = new PoolThread[this.poolsize];
-
-        this.startThreadPoll();
+        startThreadPool();
     }
-    
+
     /**
-     * Creates and starts the pool of threads.
+     * Starts the pool of threads.
      */
-    private void startThreadPoll(){
+    private void startThreadPool() {
         for (int i = 0; i < this.poolsize; i++) {
             poolAvailableThreads[i] = new PoolThread();
             poolAvailableThreads[i].start();
@@ -49,10 +36,8 @@ public class ThreadPool {
     }
 
     /**
-     * Adds a Runnable Session to the end of the list and notifies/awakes
-     * one of the threads waiting to run.
-     * 
-     * @param r - Runnable instance to be executed inside a thread
+     * Adds a Runnable task to the queue and notifies a waiting thread.
+     * @param r - Runnable task to be executed
      */
     public void execute(Runnable r) {
         synchronized (listRunnableThreads) {
@@ -60,44 +45,38 @@ public class ThreadPool {
             listRunnableThreads.notify();
         }
     }
-    
+
     /**
-     * Removes a Runnable MAIL_FROM_ADDR the list of runnables
-     * @param r 
+     * Stops the thread pool gracefully.
      */
-    public void remove(Runnable r) {
+    public void stop() {
         synchronized (listRunnableThreads) {
-            listRunnableThreads.remove(r);
-            listRunnableThreads.notify();
+            running = false;
+            listRunnableThreads.notifyAll(); // Wake up all waiting threads
         }
     }
 
     /**
-     * Each instance of PoolThread waits on the list of Runnable Sessions to
-     * pick a Runnable and run it.
+     * Worker thread class.
      */
     private class PoolThread extends Thread {
-
-        /**
-         * Waits on the monitor of the list of Runnable Sessions until it is
-         * able to pick a Runnable and execute/run it.
-         */
         public void run() {
-            Runnable r;
-            while (true) {
-                //Wait on the monitor associated with the list of runnables
+            while (running) {
+                Runnable r;
                 synchronized (listRunnableThreads) {
-                    while (listRunnableThreads.isEmpty()) {
+                    while (listRunnableThreads.isEmpty() && running) {
                         try {
                             listRunnableThreads.wait();
                         } catch (InterruptedException ex) {
-                            Logger.getLogger(ThreadPool.class.getName()).log(Level.SEVERE, null, ex);
+                            Thread.currentThread().interrupt(); // Restore interrupted state
+                            return; // Exit the thread
                         }
                     }
-                    r = (Runnable) listRunnableThreads.removeFirst();
+
+                    if (!running) return; // Check stop flag before proceeding
+                    r = listRunnableThreads.removeFirst();
                 }
 
-                // Catch RuntimeException to avoid pool leaks
                 try {
                     r.run();
                 } catch (RuntimeException e) {

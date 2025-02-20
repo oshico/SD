@@ -9,136 +9,123 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
+ * SetupContextRMI is responsible for setting up an RMI (Remote Method Invocation) context,
+ * including network configuration, security management, and RMI registry handling.
+ * This class initializes a registry and provides methods to retrieve service URLs
+ * and check whether an RMI registry is running.
  *
  * @author rui
  */
 public class SetupContextRMI {
 
     private Registry registry;
-    private InetAddress localHostInetAddress;
-    private String localHostName;
     private String localHostAddress;
 
-    private final Class subsystemClass;
-    private final String registryHostIP;
-    private final int registryHostPort;
-    private final String serviceNames[];
-    private final String serviceUrls[];
+    private final String[] serviceUrls;
     private final Logger logger;
 
     /**
+     * Constructor that initializes the RMI setup context.
      *
-     * @param subsystemClass
-     * @param registryHostIP
-     * @param registryHostPort
-     * @param serviceNames
-     * @throws java.rmi.RemoteException
+     * @param subsystemClass The class representing the subsystem using this RMI context.
+     * @param registryHostIP The IP address of the RMI registry.
+     * @param registryHostPort The port number of the RMI registry.
+     * @param serviceNames An array containing the names of the services to be registered.
+     * @throws RemoteException If there is an issue with remote communication.
      */
-    public SetupContextRMI(Class subsystemClass, String registryHostIP, String registryHostPort, String serviceNames[]) throws RemoteException {
+    public SetupContextRMI(Class<?> subsystemClass, String registryHostIP, String registryHostPort, String[] serviceNames) throws RemoteException {
         this.logger = Logger.getLogger(subsystemClass.getName());
 
         logger.log(Level.INFO, "setup context for subsystemClass {0}", subsystemClass.getName());
-        this.subsystemClass = subsystemClass;
 
         logger.log(Level.INFO, "serviceNames.length = {0}", serviceNames.length);
 
-        this.serviceNames = new String[serviceNames.length];
-        System.arraycopy(serviceNames, 0, this.serviceNames, 0, serviceNames.length);
+        String[] serviceNames1 = new String[serviceNames.length];
+        System.arraycopy(serviceNames, 0, serviceNames1, 0, serviceNames.length);
         for (int i = 0; i < serviceNames.length; i++) {
             logger.log(Level.INFO, "serviceNames[{0}] = {1}", new Object[]{i, serviceNames[i]});
         }
 
-        //1. Set network context
+        // 1. Set network context
         setupLocalHostInetAddress();
 
+        String registryHostIP1;
+        int registryHostPort1;
         if ((registryHostIP != null && registryHostPort != null)) {
-            this.registryHostIP = registryHostIP;
-            this.registryHostPort = Integer.parseInt(registryHostPort);
+            registryHostIP1 = registryHostIP;
+            registryHostPort1 = Integer.parseInt(registryHostPort);
         } else {
-            this.registryHostIP = this.localHostAddress;
-            this.registryHostPort = 1099;
+            registryHostIP1 = this.localHostAddress;
+            registryHostPort1 = 1099;
         }
 
-        this.serviceUrls = new String[this.serviceNames.length];
+        this.serviceUrls = new String[serviceNames1.length];
         logger.log(Level.INFO, "serviceUrls.length = {0}", this.serviceUrls.length);
         for (int i = 0; i < this.serviceUrls.length; i++) {
-            serviceUrls[i] = "rmi://" + this.registryHostIP + ":" + this.registryHostPort + "/" + this.serviceNames[i];
+            serviceUrls[i] = "rmi://" + registryHostIP1 + ":" + registryHostPort1 + "/" + serviceNames1[i];
             logger.log(Level.INFO, "serviceUrls[{0}] = {1}", new Object[]{i, serviceUrls[i]});
         }
 
-        //2. Set security context - Deprecated for Java 17+
-        //setupSecurityManager();
-
-        //3. Set and list registry context
-        setupRegistryContext(this.registryHostIP, this.registryHostPort);
+        // 2. Set and list registry context
+        setupRegistryContext(registryHostIP1, registryHostPort1);
     }
 
+    /**
+     * Retrieves the service URL for the given index.
+     *
+     * @param i The index of the service URL.
+     * @return The service URL if index is valid, otherwise null.
+     */
     public String getServicesUrl(int i) {
         return (i < this.serviceUrls.length ? serviceUrls[i] : null);
     }
 
     /**
-     * Create a basic network context for RMI
+     * Sets up the local host address and network context.
      */
     private void setupLocalHostInetAddress() {
         try {
-            localHostInetAddress = InetAddress.getLocalHost();
-            localHostName = localHostInetAddress.getHostName();
+            InetAddress localHostInetAddress = InetAddress.getLocalHost();
+            String localHostName = localHostInetAddress.getHostName();
             localHostAddress = localHostInetAddress.getHostAddress();
 
             logger.log(Level.INFO, "localHostName = {0}", new Object[]{localHostName});
             logger.log(Level.INFO, "localHostAddress = {0}", new Object[]{localHostAddress});
-            
+
             InetAddress[] allLocalInetAddresses = InetAddress.getAllByName(localHostName);
             for (InetAddress addr : allLocalInetAddresses) {
                 logger.log(Level.INFO, "addr = {0}", new Object[]{addr});
             }
         } catch (UnknownHostException e) {
-            //Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
             logger.log(Level.SEVERE, "exception {0}", new Object[]{e});
         }
     }
 
     /**
-     * Returns current rmiregistry proxy
+     * Returns the current RMI registry proxy.
      *
-     * @return
+     * @return The RMI registry instance.
      */
     public Registry getRegistry() {
         return this.registry;
     }
 
     /**
-     * Create and install a security manager
+     * Sets up reference for the RMI registry and lists available services.
      *
-     */
-    private void setupSecurityManager() {
-        if (System.getSecurityManager() == null) {
-            logger.log(Level.INFO, "set security manager for {0}", subsystemClass.getName());
-            System.setSecurityManager(new SecurityManager());
-        }
-    }
-
-    /**
-     * Setup reference for rmiregistry and list available services
-     *
-     * @param registryHostIP
-     * @param registryHostPort
-     * @return Registry
-     * @throws java.rmi.RemoteException
+     * @param registryHostIP The IP address of the RMI registry.
+     * @param registryHostPort The port number of the RMI registry.
+     * @throws RemoteException If an error occurs while setting up the registry context.
      */
     private void setupRegistryContext(String registryHostIP, int registryHostPort) throws RemoteException {
-        //if (this.subsystemClass.getName().contains(".server.")) {
         if (isRMIRegistryRunning(registryHostIP, registryHostPort)) {
-            //Client gets reference to already running RMI Registry
-            registry=LocateRegistry.getRegistry(registryHostIP, registryHostPort);
+            registry = LocateRegistry.getRegistry(registryHostIP, registryHostPort);
         } else {
-            // Create embedded RMI Registry (Avoids 'rmiregistry' CLI)
-            registry=LocateRegistry.createRegistry(registryHostPort);
+            registry = LocateRegistry.createRegistry(registryHostPort);
         }
-        logger.log(Level.INFO,"Embedded RMI Registry started on port {0}...", new Object[]{registryHostPort});
+        logger.log(Level.INFO, "Embedded RMI Registry started on port {0}...", new Object[]{registryHostPort});
+
         if (registry != null) {
-            //List available services
             String[] registriesList = registry.list();
             logger.log(Level.INFO, "registriesList.length = {0}", new Object[]{registriesList.length});
 
@@ -146,26 +133,36 @@ public class SetupContextRMI {
                 logger.log(Level.INFO, "registriesList[{0}] = {1}", new Object[]{i, registriesList[i]});
             }
         } else {
-            logger.log(Level.INFO, "reference to registry is null!!");
-            //registry = LocateRegistry.createRegistry(1099);
+            logger.log(Level.INFO, "Reference to registry is null!!");
         }
     }
 
-    public static void printArgs(String classname, String args[]) {
+    /**
+     * Prints the provided command-line arguments.
+     *
+     * @param classname The name of the class executing the method.
+     * @param args The array of arguments to print.
+     */
+    public static void printArgs(String classname, String[] args) {
         for (int i = 0; args != null && i < args.length; i++) {
-            //String t = Thread.currentThread().getName();
-            //Logger.getLogger(this.getClass().getName()).log(Level.INFO, "args[{0}] = {1}", new Object[]{i, args[i]});
             Logger.getLogger(classname).log(Level.INFO, "args[{0}] = {1}", new Object[]{i, args[i]});
         }
     }
 
+    /**
+     * Checks if an RMI registry is running on the specified host and port.
+     *
+     * @param host The host where the RMI registry is expected to be running.
+     * @param port The port number of the RMI registry.
+     * @return true if the registry is running, false otherwise.
+     */
     public static boolean isRMIRegistryRunning(String host, int port) {
         try {
             Registry registry = LocateRegistry.getRegistry(host, port);
             registry.list(); // Attempt to list bound services
-            return true; // If no exception, registry is running
+            return true;
         } catch (Exception e) {
-            return false;   // Registry not running
+            return false;
         }
     }
 }

@@ -13,12 +13,7 @@ import java.util.ArrayList;
  * @author Rui Moreira
  * @version 1.0
  */
- /* TODO:
-     1. Insert the other arithmetic polymorphic methods: sub(), mult() and div()
-     2. Implement the class CalculatorImpl
-     3. Implement the class CalculatorServer
-     4. Run the service and then call it by running the client
- */
+
 public interface CalculatorRI extends Remote {
     /**
      * @param a double to add
