@@ -88,7 +88,7 @@ public class CalculatorClient {
         try {
             //============ Call HelloWorld remote service ============
             double a=2.0, b=3.5, result = this.calculatorRI.add(a, b);
-            Logger.getLogger(this.getClass().getName()).log(Level.INFO, "a {0} + b {1} = result {2}", new Object[]{a, b, result});
+            Logger.getLogger(this.getClass().getName()).log(Level.INFO, "{0} - {1} = {2}", new Object[]{a, b, result});
 
             Logger.getLogger(this.getClass().getName()).log(Level.INFO, "going to finish, bye. ;)");
         } catch (RemoteException ex) {
