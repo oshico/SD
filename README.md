@@ -45,7 +45,7 @@ We encourage collaboration! Follow these simple steps:
 
 ---
 
-## 📸 Preview
+
 ![Distributed Systems](https://lh5.googleusercontent.com/proxy/4wEHvz1q2O00yppV07k-pQI8PRgqTTgGHnLh5U-g_QMi5H-VhGZLhc-0sf1z8l9bNbMcpYmIpNw3K24v4nbWkbK607Exy5CWMu6c9A)
 
 ---
