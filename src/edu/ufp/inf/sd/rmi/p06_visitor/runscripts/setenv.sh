@@ -28,12 +28,12 @@ export JAVAPROJ_NAME=SD
 # Update this to match your project folder path in Debian
 export JAVAPROJ=/home/${USERNAME}/IdeaProjects/${JAVAPROJ_NAME}
 
-export PACKAGE=p05_observer
+export PACKAGE=p06_visitor
 export PACKAGE_PREFIX=edu.ufp.inf.sd.rmi
 export PACKAGE_PREFIX_FOLDERS=edu/ufp/inf/sd/rmi
-export SERVICE_NAME_ON_REGISTRY=ObserverService
-export CLIENT_CLASS_PREFIX=ObserverGui
-export SERVER_CLASS_PREFIX=Subject
+export SERVICE_NAME_ON_REGISTRY=VisitorService
+export CLIENT_CLASS_PREFIX=VisitorElementsFolders
+export SERVER_CLASS_PREFIX=ElementsFolders
 export CLIENT_CLASS_POSTFIX=Client
 export SERVER_CLASS_POSTFIX=Server
 export SERVANT_IMPL_CLASS_POSTFIX=Impl
