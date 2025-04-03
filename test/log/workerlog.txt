@@ -1,0 +1,4 @@
+[Thu Apr 03 14:41:29 WEST 2025] Worker appended another line task: log task1. task2..
+[Thu Apr 03 14:43:36 WEST 2025] Worker appended another line task: log another line
+[Thu Apr 03 14:43:36 WEST 2025] Worker appended another line task: log task1. task2..
+[Thu Apr 03 14:43:45 WEST 2025] Worker appended another line task: log task1. task2..
