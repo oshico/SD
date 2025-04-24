@@ -16,6 +16,7 @@ export QUEUE_NAME_PREFIX=NA
 export EXCHANGE_NAME_PREFIX=logs
 export PRODUCER_CLASS_PREFIX=EmitLog
 export CONSUMER_CLASS_PREFIX=ReceiveLogs
+export OBSERVER_CLASS_PREFIX=ObserverGuiClient
 
 
 #@REM ==== NETWORK STUFF ====
