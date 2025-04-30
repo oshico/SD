@@ -15,7 +15,7 @@ ___
 ```
 📁 SD
 │── 📜 README.md  # This file
-│── 📁 src/edu/ufp/inf/sd/rmi  # Code
+│── 📁 src/edu/ufp/inf/sd/  # Code
 │── 📁 .idea  # IntelIJ IDEA specif files
 │── 📁 .SD.iml  #  IntelIJ IDEA modulation file
 ```
