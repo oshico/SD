@@ -1,0 +1,83 @@
+#!/usr/bin/env bash
+
+export SCRIPT_ROLE=$1
+
+# IDE setup
+export JDK=/usr/lib/jvm/java-17-openjdk-amd64
+export INTELLIJ=IntelliJ
+export CURRENT_IDE=${INTELLIJ}
+export USERNAME=$(whoami)
+
+# Project & Package setup
+export JAVAPROJ_NAME=SD
+export JAVAPROJ=/home/${USERNAME}/IdeaProjects/${JAVAPROJ_NAME}
+
+# RMI setup
+export MYLOCALIP=localhost
+export REGISTRY_HOST=${MYLOCALIP}
+export REGISTRY_PORT=1099
+export SERVER_RMI_HOST=${REGISTRY_HOST}
+export SERVER_RMI_PORT=1098
+export SERVER_CODEBASE_HOST=${SERVER_RMI_HOST}
+export SERVER_CODEBASE_PORT=8000
+export CLIENT_RMI_HOST=${REGISTRY_HOST}
+export CLIENT_RMI_PORT=1097
+export CLIENT_CODEBASE_HOST=${CLIENT_RMI_HOST}
+export CLIENT_CODEBASE_PORT=8000
+
+# Rabbitmq setup
+export RABBITMQ_SERVICES_FOLDER=edu/ufp/inf/sd/project/main/rabbitmq
+export RABBITMQ_SERVICES_PACKAGE=edu.ufp.inf.sd.project.main.rabbitmq
+export PACKAGE=project
+export QUEUE_NAME_PREFIX=NA
+export EXCHANGE_NAME_PREFIX=logs
+export PRODUCER_CLASS_PREFIX=ProducerApp
+export CONSUMER_CLASS_PREFIX=ConsumerApp
+export OBSERVER_CLASS_PREFIX=ObserverApp
+
+
+# Network setup
+export BROKER_HOST=localhost
+export BROKER_PORT=5672
+export BROKER_HTTP_PORT=15672
+
+
+export JAVAPACKAGE=${RABBITMQ_SERVICES_PACKAGE}.${PACKAGE}
+export JAVAPACKAGEROLE=${JAVAPACKAGE}.${SCRIPT_ROLE}
+export JAVAPACKAGEROLEPATH=${RABBITMQ_SERVICES_FOLDER}/${PACKAGE}/${SCRIPT_ROLE}
+export JAVASCRIPTSPATH=${RABBITMQ_SERVICES_FOLDER}/${PACKAGE}/runscripts
+export BROKER_QUEUE=${QUEUE_NAME_PREFIX}_queue
+export BROKER_EXCHANGE=${EXCHANGE_NAME_PREFIX}_exchange
+export SERVICE_URL=http://${BROKER_HOST}:${BROKER_PORT}
+
+export PATH=${PATH}:${JDK}/bin
+
+if [[ "${CURRENT_IDE}" == "${NETBEANS}" ]]; then
+    export JAVAPROJ_SRC=src
+    export JAVAPROJ_CLASSES=build/classes/
+    export JAVAPROJ_DIST=dist
+    export JAVAPROJ_DIST_LIB=lib
+elif [[ "${CURRENT_IDE}" == "${INTELLIJ}" ]]; then
+    export JAVAPROJ_SRC=src
+    export JAVAPROJ_CLASSES=out/production/${JAVAPROJ_NAME}/
+    export JAVAPROJ_DIST=out/artifacts/${JAVAPROJ_NAME}
+    export JAVAPROJ_DIST_LIB=lib
+fi
+
+export JAVAPROJ_CLASSES_FOLDER=${JAVAPROJ}/${JAVAPROJ_CLASSES}
+export JAVAPROJ_JAR_FILE=${JAVAPROJ}/${JAVAPROJ_DIST}/${JAVAPROJ_NAME}.jar
+export JAVA_LIB_FOLDER=${JAVAPROJ}/${JAVAPROJ_DIST_LIB}
+export JAVA_RABBITMQ_TOOLS=${JAVA_LIB_FOLDER}/amqp-client-5.9.0.jar:${JAVA_LIB_FOLDER}/slf4j-api-1.7.30.jar:${JAVA_LIB_FOLDER}/slf4j-simple-1.7.30.jar
+export JAVA_JAVAMAIL_TOOLS=${JAVA_LIB_FOLDER}/javax.mail-1.6.2.jar:${JAVA_LIB_FOLDER}/activation-1.1.jar
+
+#export CLASSPATH=${JAVAPROJ_CLASSES_FOLDER}:${JAVA_RABBITMQ_TOOLS}
+#export CLASSPATH=${JAVAPROJ_JAR_FILE}
+export CLASSPATH=${JAVAPROJ_JAR_FILE}:${JAVA_RABBITMQ_TOOLS}:${JAVA_JAVAMAIL_TOOLS}
+
+export ABSPATH2CLASSES=${JAVAPROJ_CLASSES_FOLDER}
+export ABSPATH2SRC=${JAVAPROJ}/${JAVAPROJ_SRC}
+
+
+
+
+
