@@ -1,9 +1,4 @@
 #!/usr/bin/env bash
-#************************************************************************************
-# Description: run previously all batch files
-# Author: Rui S. Moreira
-# Date: 20/02/2019
-#************************************************************************************
 
 # ======================== Use Shell Parameters ========================
 # Script usage: setenv <role> (where role should be: server / client)
@@ -28,14 +23,14 @@ export JAVAPROJ_NAME=SD
 # Update this to match your project folder path in Debian
 export JAVAPROJ=/home/${USERNAME}/IdeaProjects/${JAVAPROJ_NAME}
 
-export PACKAGE=p03_pingpong
-export PACKAGE_PREFIX=edu.ufp.inf.sd.rmi
-export PACKAGE_PREFIX_FOLDERS=edu/ufp/inf/sd/rmi
-export SERVICE_NAME_ON_REGISTRY=PingService
-export CLIENT_CLASS_PREFIX=Pingpong
-export SERVER_CLASS_PREFIX=Pingpong
-export CLIENT_CLASS_POSTFIX=Client
-export SERVER_CLASS_POSTFIX=Server
+export PACKAGE=project
+export PACKAGE_PREFIX=edu.ufp.inf.sd
+export PACKAGE_PREFIX_FOLDERS=edu/ufp/inf/sd
+export SERVICE_NAME_ON_REGISTRY=Project
+export CLIENT_CLASS_PREFIX=Client
+export SERVER_CLASS_PREFIX=Server
+export CLIENT_CLASS_POSTFIX=Main
+export SERVER_CLASS_POSTFIX=Main
 export SERVANT_IMPL_CLASS_POSTFIX=Impl
 
 # ==== NETWORK STUFF ====

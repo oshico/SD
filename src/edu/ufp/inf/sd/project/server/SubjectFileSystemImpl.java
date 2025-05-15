@@ -133,7 +133,7 @@ public class SubjectFileSystemImpl extends UnicastRemoteObject implements Subjec
                     exists = true;
                     break;
                 }
-            } catch (RemoteException e) {
+            } catch (Exception e) {
                 // Remove failed observers
                 docObservers.remove(existingObserver);
             }
@@ -159,7 +159,7 @@ public class SubjectFileSystemImpl extends UnicastRemoteObject implements Subjec
             docObservers.removeIf(o -> {
                 try {
                     return o.equals(observer);
-                } catch (RemoteException e) {
+                } catch (Exception e) {
                     return true; // Remove failed observers
                 }
             });
