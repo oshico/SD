@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-
 # Source environment variables for the client role
 source ./setenv.sh client
 
@@ -13,7 +12,7 @@ java -cp "${CLASSPATH}" \
      -D${JAVAPACKAGEROLE}.codebase="${CLIENT_CODEBASE}" \
      -D${JAVAPACKAGE}.servicename="${SERVICE_NAME_ON_REGISTRY}" \
      "${JAVAPACKAGEROLE}"."${CLIENT_CLASS_PREFIX}${CLIENT_CLASS_POSTFIX}" \
-     "${REGISTRY_HOST}" "${REGISTRY_PORT}" "${SERVICE_NAME_ON_REGISTRY}"
+     "${REGISTRY_HOST}" "${REGISTRY_PORT}" "${SERVICE_NAME_ON_REGISTRY}" "$1"
 
 # Change to the JavaScript directory
 cd "${ABSPATH2SRC}/${JAVASCRIPTSPATH}" || exit 1  # Exit if the directory doesn't exist
