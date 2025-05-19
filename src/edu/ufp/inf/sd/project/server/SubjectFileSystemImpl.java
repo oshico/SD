@@ -199,4 +199,161 @@ public class SubjectFileSystemImpl extends UnicastRemoteObject implements Subjec
             docObservers.removeAll(failedObservers);
         }
     }
+
+    /**
+     * Creates a new folder.
+     *
+     * @param folderName The name of the folder
+     * @return true if creation is successful, false otherwise
+     * @throws RemoteException If a remote communication error occurs
+     */
+    @Override
+    public boolean createFolder(String folderName) throws RemoteException {
+        System.out.println("Creating folder: " + folderName + " for user: " + username);
+        return database.createFolder(username, folderName);
+    }
+
+    /**
+     * Lists all folders owned by the user.
+     *
+     * @return A list of folder names
+     * @throws RemoteException If a remote communication error occurs
+     */
+    @Override
+    public List<String> listFolders() throws RemoteException {
+        Map<String, Folder> folders = database.getUserFolders(username);
+        return new ArrayList<>(folders.keySet());
+    }
+
+    /**
+     * Lists all folders shared with the user.
+     *
+     * @return A map where keys are owner usernames and values are lists of folder names
+     * @throws RemoteException If a remote communication error occurs
+     */
+    @Override
+    public Map<String, List<String>> listSharedFolders() throws RemoteException {
+        Map<String, Map<String, Folder>> sharedFolders = database.getSharedFoldersWithUser(username);
+        Map<String, List<String>> result = new HashMap<>();
+
+        for (Map.Entry<String, Map<String, Folder>> entry : sharedFolders.entrySet()) {
+            String ownerUsername = entry.getKey();
+            Map<String, Folder> ownerFolders = entry.getValue();
+            List<String> folderNames = new ArrayList<>(ownerFolders.keySet());
+            result.put(ownerUsername, folderNames);
+        }
+
+        return result;
+    }
+
+    /**
+     * Adds a document to a folder.
+     *
+     * @param folderName   The name of the folder
+     * @param documentName The name of the document
+     * @return true if the document was added to the folder, false otherwise
+     * @throws RemoteException If a remote communication error occurs
+     */
+    @Override
+    public boolean addDocumentToFolder(String folderName, String documentName) throws RemoteException {
+        System.out.println("Adding document: " + documentName + " to folder: " + folderName + " for user: " + username);
+        return database.addDocumentToFolder(username, folderName, documentName);
+    }
+
+    /**
+     * Removes a document from a folder.
+     *
+     * @param folderName   The name of the folder
+     * @param documentName The name of the document
+     * @return true if the document was removed from the folder, false otherwise
+     * @throws RemoteException If a remote communication error occurs
+     */
+    @Override
+    public boolean removeDocumentFromFolder(String folderName, String documentName) throws RemoteException {
+        System.out.println("Removing document: " + documentName + " from folder: " + folderName + " for user: " + username);
+        return database.removeDocumentFromFolder(username, folderName, documentName);
+    }
+
+    /**
+     * Lists all documents in a folder.
+     *
+     * @param folderName The name of the folder
+     * @return A list of document names
+     * @throws RemoteException If a remote communication error occurs
+     */
+    @Override
+    public List<String> listFolderDocuments(String folderName) throws RemoteException {
+        Folder folder = database.getFolder(username, folderName);
+        if (folder != null) {
+            return folder.getDocuments();
+        }
+        return new ArrayList<>();
+    }
+
+    /**
+     * Lists all documents in a shared folder.
+     *
+     * @param ownerUsername The username of the folder owner
+     * @param folderName    The name of the folder
+     * @return A list of document names
+     * @throws RemoteException If a remote communication error occurs
+     */
+    @Override
+    public List<String> listSharedFolderDocuments(String ownerUsername, String folderName) throws RemoteException {
+        Folder folder = database.getFolder(ownerUsername, folderName);
+        if (folder != null && folder.hasAccess(username)) {
+            return folder.getDocuments();
+        }
+        return new ArrayList<>();
+    }
+
+    /**
+     * Shares a folder with another user.
+     *
+     * @param folderName     The name of the folder
+     * @param targetUsername The username to share with
+     * @return true if the folder was shared, false otherwise
+     * @throws RemoteException If a remote communication error occurs
+     */
+    @Override
+    public boolean shareFolder(String folderName, String targetUsername) throws RemoteException {
+        System.out.println("User " + username + " is sharing folder: " + folderName + " with user: " + targetUsername);
+        return database.shareFolder(username, folderName, targetUsername);
+    }
+
+    /**
+     * Unshares a folder with a user.
+     *
+     * @param folderName     The name of the folder
+     * @param targetUsername The username to unshare with
+     * @return true if the folder was unshared, false otherwise
+     * @throws RemoteException If a remote communication error occurs
+     */
+    @Override
+    public boolean unshareFolder(String folderName, String targetUsername) throws RemoteException {
+        System.out.println("User " + username + " is unsharing folder: " + folderName + " with user: " + targetUsername);
+        return database.unshareFolder(username, folderName, targetUsername);
+    }
+
+    /**
+     * Opens a document from a shared folder.
+     *
+     * @param ownerUsername The username of the folder owner
+     * @param folderName    The name of the folder
+     * @param documentName  The name of the document
+     * @return The document content as a String
+     * @throws RemoteException If a remote communication error occurs
+     */
+    @Override
+    public String openSharedDocument(String ownerUsername, String folderName, String documentName) throws RemoteException {
+        // Check if the user has access to the folder
+        Folder folder = database.getFolder(ownerUsername, folderName);
+        if (folder != null && folder.hasAccess(username)) {
+            // Check if the document is in the folder
+            if (folder.getDocuments().contains(documentName)) {
+                return database.getDocument(ownerUsername, documentName);
+            }
+        }
+        throw new RemoteException("Access denied or document not found in the shared folder");
+    }
 }
