@@ -12,14 +12,10 @@ public class ServerMain {
     private static final String SERVICE_NAME = "CollaborativeEditor";
 
     private final Database database;
-    private final Map<String, SessionImpl> activeSessions;
 
-    /**
-     * Constructor for the server main class.
-     */
+
     public ServerMain() {
         this.database = new Database();
-        this.activeSessions = new ConcurrentHashMap<>();
     }
 
     /**
@@ -56,7 +52,7 @@ public class ServerMain {
             SetupContextRMI contextRMI = new SetupContextRMI(this.getClass(), registryHost, registryPort, new String[]{serviceName});
 
             // Create and bind the authentication service
-            AuthServiceRI authService = new AuthServiceImpl(this, database);
+            AuthServiceRI authService = new AuthServiceImpl(database);
 
             // Get registry
             Registry registry = contextRMI.getRegistry();
@@ -73,59 +69,8 @@ public class ServerMain {
         }
     }
 
-    /**
-     * Gets the database instance.
-     *
-     * @return The database instance
-     */
+
     public Database getDatabase() {
         return database;
-    }
-
-    /**
-     * Adds an active session to the server.
-     *
-     * @param username The username
-     * @param session  The session
-     */
-    public void addActiveSession(String username, SessionImpl session) {
-        // If user already has a session, invalidate it
-        SessionImpl existingSession = activeSessions.get(username);
-        if (existingSession != null) {
-            existingSession.invalidate();
-        }
-
-        activeSessions.put(username, session);
-        System.out.println("Active sessions: " + activeSessions.size());
-    }
-
-    /**
-     * Removes an active session from the server.
-     *
-     * @param username The username
-     */
-    public void removeActiveSession(String username) {
-        activeSessions.remove(username);
-        System.out.println("Session removed for user: " + username);
-        System.out.println("Active sessions: " + activeSessions.size());
-    }
-
-    /**
-     * Gets all active sessions.
-     *
-     * @return A map of usernames to sessions
-     */
-    public Map<String, SessionImpl> getActiveSessions() {
-        return new HashMap<>(activeSessions);
-    }
-
-    /**
-     * Gets an active session by username.
-     *
-     * @param username The username
-     * @return The session, or null if not found
-     */
-    public SessionImpl getSession(String username) {
-        return activeSessions.get(username);
     }
 }

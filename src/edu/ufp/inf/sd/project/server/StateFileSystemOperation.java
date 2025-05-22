@@ -4,7 +4,7 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class StateFileSystemOperation implements Serializable {
+public class StateFileSystemOperation implements Serializable{
     @Serial
     private static final long serialVersionUID = 1L;
 
@@ -14,9 +14,7 @@ public class StateFileSystemOperation implements Serializable {
     private final LocalDateTime timestamp;
     private final OperationType type;
 
-    /**
-     * Enum representing types of operations that can be performed on documents.
-     */
+
     public enum OperationType {
         CREATE,
         UPDATE,

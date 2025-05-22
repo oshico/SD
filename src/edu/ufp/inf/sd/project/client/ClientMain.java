@@ -16,26 +16,12 @@ import java.util.Scanner;
 
 
 public class ClientMain {
-    // RMI setup
     private Registry registry;
     private AuthServiceRI authService;
     private SessionRI session;
     private SubjectFileSystemRI fileSystem;
     private ObserverRI observer;
 
-    // Client state
-    private String currentUsername;
-    private String currentDocument;
-    private boolean isEditing = false;
-    private Timer autoSaveTimer;
-    private String lastEditedContent = "";
-
-
-    /**
-     * Main method to start the client.
-     *
-     * @param args Command line arguments (registry host, registry port, service name)
-     */
     public static void main(String[] args) {
         if (args.length < 3) {
             System.err.println("Usage: java ClientMain <registry_host> <registry_port> <service_name>");
@@ -50,13 +36,6 @@ public class ClientMain {
         client.lookupService(registryHost, registryPort, serviceName);
     }
 
-    /**
-     * Looks up the remote service from the registry.
-     *
-     * @param registryHost The registry host
-     * @param registryPort The registry port
-     * @param serviceName  The service name
-     */
     private void lookupService(String registryHost, String registryPort, String serviceName) {
         try {
             // Get the registry
@@ -81,33 +60,6 @@ public class ClientMain {
             System.err.println("Error connecting to server: " + e.getMessage());
             System.exit(1);
         }
-    }
-
-    public String getCurrentUsername() {
-        return currentUsername;
-    }
-
-    public String getCurrentDocument() {
-        return currentDocument;
-    }
-
-    public void updateDocumentContent(String content) {
-        System.out.println("Document content updated:\n" + content);
-    }
-
-    public void handleNewSharedFolder(String ownerUsername, String folderName, List<String> documentNames) {
-        System.out.println("New shared folder received: " + folderName + " from " + ownerUsername);
-        for (String doc : documentNames) {
-            System.out.println(" - " + doc);
-        }
-    }
-
-    public void handleUnsharedFolder(String ownerUsername, String folderName) {
-        System.out.println("You no longer have access to folder '" + folderName + "' from " + ownerUsername);
-    }
-
-    public boolean isCurrentSharedDocument(String ownerUsername, String folderName, String documentName) {
-        return currentDocument != null && currentDocument.equals(documentName);
     }
 
     private void runConsole() {
@@ -136,10 +88,7 @@ public class ClientMain {
                     case "2":
                         session = authService.login(username, password);
                         if (session != null) {
-                            currentUsername = username;
-                            observer = new ObserverImpl(this);
-                            fileSystem = session.getFileSystem();
-                            fileSystem.attachObserver("",observer);
+                            observer =
                             System.out.println("Logged in successfully.");
                             loggedIn = true;
                         } else {
@@ -164,8 +113,9 @@ public class ClientMain {
             System.out.println("1. Create Document");
             System.out.println("2. Open Document");
             System.out.println("3. Edit Document");
-            System.out.println("4. Share Folder");
-            System.out.println("5. Exit");
+            System.out.println("4. Switch Folder");
+            System.out.println("5. Share Folder");
+            System.out.println("6. Exit");
             System.out.print("Enter command: ");
 
             String input = scanner.nextLine();
@@ -196,10 +146,16 @@ public class ClientMain {
                         sb.append(line).append("\n");
                     }
                     lastEditedContent = sb.toString();
-                    fileSystem.updateDocument(currentDocument, lastEditedContent,currentUsername);
+                    fileSystem.updateDocument(currentDocument, lastEditedContent, currentUsername);
 
                     break;
                 case "4":
+                    System.out.print("Folder name: ");
+                    String folderToSwitch = scanner.nextLine();
+                    fileSystem.attachObserver(folderToSwitch, observer);
+                    System.out.println("Switched to folder .");
+                    break;
+                case "5":
                     System.out.print("Folder name: ");
                     String folder = scanner.nextLine();
                     System.out.print("Username to share with: ");
@@ -207,9 +163,9 @@ public class ClientMain {
                     fileSystem.shareFolder(folder, shareTo);
                     System.out.println("Shared folder " + folder + " with " + shareTo);
                     break;
-                case "5":
+                case "6":
                     System.out.println("Exiting.");
-                    fileSystem.updateDocument(currentDocument,lastEditedContent,currentUsername);
+                    fileSystem.updateDocument(currentDocument, lastEditedContent, currentUsername);
                     System.exit(0);
                 default:
                     System.out.println("Unknown command.");
