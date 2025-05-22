@@ -3,82 +3,41 @@ package edu.ufp.inf.sd.project.server;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
-public class StateFileSystemOperation implements Serializable{
+public class StateFileSystemOperation implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
     private final String username;
-    private final String documentName;
-    private final String content;
-    private final LocalDateTime timestamp;
     private final OperationType type;
+    private final ArrayList<String> params;
 
 
     public enum OperationType {
-        CREATE,
-        UPDATE,
-        DELETE
+        CREATEFILE,
+        UPDATEFILE,
+        DELETEFILE,
+        CREATEFOLDER,
+        DELETEFOLDER,
     }
 
-    /**
-     * Constructor for creating a new file system operation.
-     *
-     * @param username     The username of the user performing the operation
-     * @param documentName The name of the document
-     * @param content      The content of the document after the operation
-     * @param type         The type of operation
-     */
-    public StateFileSystemOperation(String username, String documentName, String content, OperationType type) {
+    public StateFileSystemOperation(String username, ArrayList<String> params, OperationType type) {
         this.username = username;
-        this.documentName = documentName;
-        this.content = content;
-        this.timestamp = LocalDateTime.now();
+        this.params = params;
         this.type = type;
     }
 
-    /**
-     * Gets the username.
-     *
-     * @return The username
-     */
-    public String getUsername() {
-        return username;
-    }
+   public static void executeOperation(StateFileSystemOperation sfso) {
+        switch (sfso.type) {
+            case CREATEFILE:
 
-    /**
-     * Gets the document name.
-     *
-     * @return The document name
-     */
-    public String getDocumentName() {
-        return documentName;
-    }
+                break;
+            case UPDATEFILE:
 
-    /**
-     * Gets the document content.
-     *
-     * @return The document content
-     */
-    public String getContent() {
-        return content;
-    }
+                break;
+            case DELETEFILE:
 
-    /**
-     * Gets the timestamp of the operation.
-     *
-     * @return The timestamp
-     */
-    public LocalDateTime getTimestamp() {
-        return timestamp;
-    }
-
-    /**
-     * Gets the operation type.
-     *
-     * @return The operation type
-     */
-    public OperationType getType() {
-        return type;
-    }
+        }
+   }
 }

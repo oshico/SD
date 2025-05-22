@@ -15,4 +15,6 @@ public interface SubjectFileSystemRI extends Remote {
     void detachObserver(ObserverRI observer) throws RemoteException;
 
     ArrayList setStateFileSystemOperation(StateFileSystemOperation stateFileSystemOperation) throws RemoteException;
+
+    void notifyObservers(StateFileSystemOperation stateFileSystemOperation);
 }

@@ -6,6 +6,9 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Database implements Serializable {
+
+    private static Database instance;
+
     @Serial
     private static final long serialVersionUID = 1L;
 
@@ -18,12 +21,19 @@ public class Database implements Serializable {
      * Constructor that initializes the database.
      * Attempts to load existing data from file if available.
      */
-    public Database() {
+    private Database() {
         // Initialize with concurrent collections for thread safety
         users = new ConcurrentHashMap<>();
         sessions = new ConcurrentHashMap<>();
         subjectFileSystems = new ConcurrentHashMap<>();
         userSharedFolders = new ConcurrentHashMap<>();
+    }
+
+    protected static Database getDatabaseInstance(){
+        if (instance==null){
+            instance = new Database();
+        }
+        return instance;
     }
 
     /**

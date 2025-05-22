@@ -9,13 +9,14 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ServerMain {
+
     private static final String SERVICE_NAME = "CollaborativeEditor";
 
     private final Database database;
 
 
     public ServerMain() {
-        this.database = new Database();
+        this.database = Database.getDatabaseInstance();
     }
 
     /**
@@ -67,10 +68,5 @@ public class ServerMain {
             System.err.println("Error starting server: " + e.getMessage());
             e.printStackTrace();
         }
-    }
-
-
-    public Database getDatabase() {
-        return database;
     }
 }

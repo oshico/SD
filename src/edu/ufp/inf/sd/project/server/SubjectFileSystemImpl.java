@@ -14,7 +14,7 @@ public class SubjectFileSystemImpl extends UnicastRemoteObject implements Subjec
 
     private final String username;
     private final Database database;
-
+    private final ArrayList<ObserverRI> observers = new ArrayList<>();
 
     public SubjectFileSystemImpl(String username, Database database) throws RemoteException {
         super();
@@ -29,11 +29,22 @@ public class SubjectFileSystemImpl extends UnicastRemoteObject implements Subjec
 
     @Override
     public void attachObserver(ObserverRI observer) throws RemoteException {
-
+        this.observers.add(observer);
     }
 
     @Override
     public void detachObserver(ObserverRI observer) throws RemoteException {
-        return;
+        this.observers.add(observer);
+    }
+
+    @Override
+    public void notifyObservers(StateFileSystemOperation stateFileSystemOperation) {
+        for (ObserverRI observer : observers) {
+            try {
+                observer.update(stateFileSystemOperation);
+            } catch (RemoteException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 }
