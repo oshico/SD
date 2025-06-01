@@ -21,7 +21,7 @@ export USERNAME=$(whoami)
 # ==== JAVA NAMING STUFF ====
 export JAVAPROJ_NAME=SD
 # Update this to match your project folder path in Debian
-export JAVAPROJ=/home/${USERNAME}/IdeaProjects/${JAVAPROJ_NAME}
+export JAVAPROJ=/home/${USERNAME}/Projects/${JAVAPROJ_NAME}
 
 export PACKAGE=project
 export PACKAGE_PREFIX=edu.ufp.inf.sd

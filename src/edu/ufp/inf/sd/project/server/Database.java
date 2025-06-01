@@ -29,8 +29,8 @@ public class Database implements Serializable {
         userSharedFolders = new ConcurrentHashMap<>();
     }
 
-    protected static Database getDatabaseInstance(){
-        if (instance==null){
+    protected static Database getDatabaseInstance() {
+        if (instance == null) {
             instance = new Database();
         }
         return instance;
@@ -97,7 +97,7 @@ public class Database implements Serializable {
     }
 
     public synchronized boolean addSubjectFileSystem(String username, SubjectFileSystemRI fileSystem) throws RemoteException {
-        if (!subjectFileSystems.containsKey(username)) {
+        if (subjectFileSystems.containsKey(username)) {
             return false;
         }
         subjectFileSystems.put(username, fileSystem);
@@ -121,7 +121,7 @@ public class Database implements Serializable {
 
     public synchronized boolean addUserSharedFolder(String username, String owner, SubjectFileSystemRI subjectFileSystem) throws RemoteException {
         if (!userSharedFolders.containsKey(username)) {
-            return false;
+            userSharedFolders.put(username, new HashMap<>());
         }
         Map<String, SubjectFileSystemRI> sharedFolders = new HashMap<>();
         sharedFolders.put(owner, subjectFileSystem);
@@ -136,7 +136,7 @@ public class Database implements Serializable {
         return userSharedFolders.get(username);
     }
 
-    public synchronized boolean removeUserSharedFolder(String owner, String username,SubjectFileSystemRI subjectFileSystem ) throws RemoteException {
+    public synchronized boolean removeUserSharedFolder(String owner, String username, SubjectFileSystemRI subjectFileSystem) throws RemoteException {
         if (!userSharedFolders.containsKey(owner)) {
             return false;
         }

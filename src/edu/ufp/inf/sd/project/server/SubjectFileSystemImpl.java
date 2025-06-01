@@ -38,7 +38,7 @@ public class SubjectFileSystemImpl extends UnicastRemoteObject implements Subjec
     }
 
     @Override
-    public void notifyObservers(StateFileSystemOperation stateFileSystemOperation) {
+    public void notifyObservers(StateFileSystemOperation stateFileSystemOperation) throws RemoteException {
         for (ObserverRI observer : observers) {
             try {
                 observer.update(stateFileSystemOperation);
