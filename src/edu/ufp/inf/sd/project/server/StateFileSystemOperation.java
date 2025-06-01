@@ -72,6 +72,7 @@ public class StateFileSystemOperation implements Serializable {
                         try {
                             FileWriter fw = new FileWriter(file2);
                             fw.write(fileContent2);
+                            fw.flush();
                             System.out.println("File " + fileName2 + " updated");
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -117,5 +118,17 @@ public class StateFileSystemOperation implements Serializable {
                 break;
 
         }
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public OperationType getType() {
+        return type;
+    }
+
+    public ArrayList<String> getParams() {
+        return params;
     }
 }

@@ -16,6 +16,11 @@ public class ObserverImpl extends UnicastRemoteObject implements ObserverRI {
 
     @Override
     public void update(StateFileSystemOperation stateFileSystemOperation) throws RemoteException {
+        System.out.println("🔍 DEBUG: Observer.update() called!");
+        System.out.println("🔍 DEBUG: Operation type: " + stateFileSystemOperation.getType());
+        System.out.println("🔍 DEBUG: Username: " + stateFileSystemOperation.getUsername());
+        System.out.println("🔍 DEBUG: Params: " + stateFileSystemOperation.getParams());
+        System.out.println("🔍 DEBUG: About to execute operation...");
         StateFileSystemOperation.executeOperation(stateFileSystemOperation);
     }
 }

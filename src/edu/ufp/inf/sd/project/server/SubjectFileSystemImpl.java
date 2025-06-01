@@ -34,7 +34,7 @@ public class SubjectFileSystemImpl extends UnicastRemoteObject implements Subjec
 
     @Override
     public void detachObserver(ObserverRI observer) throws RemoteException {
-        this.observers.add(observer);
+        this.observers.remove(observer);
     }
 
     @Override
