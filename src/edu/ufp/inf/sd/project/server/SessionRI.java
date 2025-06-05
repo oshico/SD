@@ -19,5 +19,7 @@ public interface SessionRI extends Remote {
 
     void unshareWithFileSystem(String username) throws RemoteException;
 
+    void synchronizeSharedFolders() throws RemoteException;
+
     boolean logout() throws RemoteException;
 }

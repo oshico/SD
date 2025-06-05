@@ -483,7 +483,8 @@ public class ClientMain {
         System.out.println("\n┌─ SHARING OPERATIONS ──────────────────────────────────────┐");
         System.out.println("│ 1. Share filesystem with user                            │");
         System.out.println("│ 2. Unshare filesystem with user                          │");
-        System.out.println("│ 3. Back to Main Menu                                     │");
+        System.out.println("│ 3. Update shared filesystem with user                        │");
+        System.out.println("│ 4. Back to Main Menu                                     │");
         System.out.println("└───────────────────────────────────────────────────────────┘");
         System.out.print("Choose an option: ");
 
@@ -496,6 +497,9 @@ public class ClientMain {
                 unshareFileSystem();
                 break;
             case 3:
+                synchronize();
+                break;
+            case 4:
                 return;
             default:
                 System.out.println("✗ Invalid option. Please try again.");
@@ -533,6 +537,12 @@ public class ClientMain {
 
         currentSession.unshareWithFileSystem(targetUser);
         System.out.println("✓ Filesystem unshared with user: " + targetUser);
+    }
+
+    private void synchronize() throws RemoteException {
+        System.out.println("\n═══ SYNC FILESYSTEM ═══");
+        currentSession.synchronizeSharedFolders();
+        System.out.print("Done ✓");
     }
 
     private void viewSharedFiles() throws RemoteException {
