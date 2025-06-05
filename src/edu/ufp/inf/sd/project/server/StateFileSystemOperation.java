@@ -29,7 +29,7 @@ public class StateFileSystemOperation implements Serializable {
     public static void executeOperation(StateFileSystemOperation sfso) {
         switch (sfso.type) {
             case CREATEFILE:
-                String filePath = sfso.params.get(0);
+                String filePath = "/home/oshico/Projects/SD/data/server/" + sfso.params.get(0);
                 String fileName = sfso.params.get(1);
                 File dir = new File(filePath);
                 if (!dir.exists()) {
@@ -58,7 +58,7 @@ public class StateFileSystemOperation implements Serializable {
                 }
                 break;
             case UPDATEFILE:
-                String filePath2 = sfso.params.get(0);
+                String filePath2 = "/home/oshico/Projects/SD/data/server/" + sfso.params.get(0);
                 String fileName2 = sfso.params.get(1);
                 String fileContent2 = sfso.params.get(2);
                 File dir2 = new File(filePath2);
@@ -83,7 +83,7 @@ public class StateFileSystemOperation implements Serializable {
 
                 break;
             case DELETEFILE:
-                String filePath3 = sfso.params.get(0);
+                String filePath3 = "/home/oshico/Projects/SD/data/server/" + sfso.params.get(0);
                 String fileName3 = sfso.params.get(1);
                 File dir3 = new File(filePath3);
                 if (!dir3.exists()) {
@@ -98,7 +98,7 @@ public class StateFileSystemOperation implements Serializable {
                 }
                 break;
             case CREATEFOLDER:
-                String dirPath4 = sfso.params.get(0);
+                String dirPath4 = "/home/oshico/Projects/SD/data/server/" + sfso.params.get(0);
                 File dir4 = new File(dirPath4);
                 if (!dir4.exists()) {
                     dir4.mkdirs();
@@ -108,7 +108,7 @@ public class StateFileSystemOperation implements Serializable {
                 }
                 break;
             case DELETEFOLDER:
-                String dirPath5 = sfso.params.get(0);
+                String dirPath5 = "/home/oshico/Projects/SD/data/server/" + sfso.params.get(0);
                 File dir5 = new File(dirPath5);
                 if (dir5.delete()) {
                     System.out.println("Folder deleted: " + dirPath5);

@@ -3,6 +3,9 @@ package edu.ufp.inf.sd.project.client;
 import edu.ufp.inf.sd.project.server.*;
 import edu.ufp.inf.sd.project.util.SetupContextRMI;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.Registry;
@@ -254,14 +257,41 @@ public class ClientMain {
 
     private void createFile() throws RemoteException {
         System.out.println("\n═══ CREATE FILE ═══");
-        System.out.print("Enter file path (e.g., /home/user/documents): ");
-        String filePath = scanner.nextLine().trim();
+        System.out.print("Enter file path (e.g., test): ");
+        String filePath = currentSession.getUsername() + "/" + scanner.nextLine().trim();
         System.out.print("Enter file name (e.g., document.txt): ");
         String fileName = scanner.nextLine().trim();
 
         if (filePath.isEmpty() || fileName.isEmpty()) {
             System.out.println("✗ File path and name cannot be empty.");
             return;
+        }
+
+        String filePathLocal = "/home/oshico/Projects/SD/data/" + filePath;
+        File dir = new File(filePathLocal);
+        if (!dir.exists()) {
+            dir.mkdirs();
+            File file = new File(dir, fileName);
+            try {
+                if (file.createNewFile()) {
+                    System.out.println("File " + fileName + " created");
+                } else {
+                    System.out.println("File " + fileName + " already exists");
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            File file = new File(dir, fileName);
+            try {
+                if (file.createNewFile()) {
+                    System.out.println("File " + fileName + " created");
+                } else {
+                    System.out.println("File " + fileName + " already exists");
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         ArrayList<String> params = new ArrayList<>();
@@ -282,7 +312,7 @@ public class ClientMain {
     private void updateFile() throws RemoteException {
         System.out.println("\n═══ UPDATE FILE ═══");
         System.out.print("Enter file path: ");
-        String filePath = scanner.nextLine().trim();
+        String filePath = currentSession.getUsername() + "/" + scanner.nextLine().trim();
         System.out.print("Enter file name: ");
         String fileName = scanner.nextLine().trim();
         System.out.println("Enter file content (press Enter twice to finish):");
@@ -306,6 +336,27 @@ public class ClientMain {
             return;
         }
 
+        String filePathLocal = "/home/oshico/Projects/SD/data/" + filePath;
+        File dir = new File(filePathLocal);
+        if (!dir.exists()) {
+            System.out.println("File " + filePathLocal + " is not at " + dir.getAbsolutePath());
+        } else {
+            File file = new File(dir, fileName);
+            if (!file.exists()) {
+                System.out.println("File " + filePathLocal + " does not exist at " + file.getAbsolutePath());
+            } else {
+                try {
+                    FileWriter fw = new FileWriter(file);
+                    fw.write(content.toString());
+                    fw.flush();
+                    System.out.println("File " + fileName + " updated");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }
+
         ArrayList<String> params = new ArrayList<>();
         params.add(filePath);
         params.add(fileName);
@@ -325,13 +376,26 @@ public class ClientMain {
     private void deleteFile() throws RemoteException {
         System.out.println("\n═══ DELETE FILE ═══");
         System.out.print("Enter file path: ");
-        String filePath = scanner.nextLine().trim();
+        String filePath = currentSession.getUsername() + "/" + scanner.nextLine().trim();
         System.out.print("Enter file name: ");
         String fileName = scanner.nextLine().trim();
 
         if (filePath.isEmpty() || fileName.isEmpty()) {
             System.out.println("✗ File path and name cannot be empty.");
             return;
+        }
+
+        String filePathLocal = "/home/oshico/Projects/SD/data/" + filePath;
+        File dir = new File(filePathLocal);
+        if (!dir.exists()) {
+            System.out.println("File is not at:" + filePathLocal);
+        } else {
+            File file3 = new File(dir, fileName);
+            if (file3.delete()) {
+                System.out.println("File " + fileName + " deleted");
+            } else {
+                System.out.println("File " + fileName + " does not exist");
+            }
         }
 
         ArrayList<String> params = new ArrayList<>();
@@ -351,12 +415,21 @@ public class ClientMain {
 
     private void createFolder() throws RemoteException {
         System.out.println("\n═══ CREATE FOLDER ═══");
-        System.out.print("Enter folder path (e.g., /home/user/newfolder): ");
-        String folderPath = scanner.nextLine().trim();
+        System.out.print("Enter folder path (e.g., folder folder/folder): ");
+        String folderPath = currentSession.getUsername() + "/" + scanner.nextLine().trim();
 
         if (folderPath.isEmpty()) {
             System.out.println("✗ Folder path cannot be empty.");
             return;
+        }
+
+        String folderPathLocal = "/home/oshico/Projects/SD/data/" + folderPath;
+        File dir = new File(folderPathLocal);
+        if (!dir.exists()) {
+            dir.mkdirs();
+            System.out.println("Folder created: " + dir.getAbsolutePath());
+        } else {
+            System.out.println("Folder already exists: " + dir.getAbsolutePath());
         }
 
         ArrayList<String> params = new ArrayList<>();
@@ -376,12 +449,21 @@ public class ClientMain {
     private void deleteFolder() throws RemoteException {
         System.out.println("\n═══ DELETE FOLDER ═══");
         System.out.print("Enter folder path: ");
-        String folderPath = scanner.nextLine().trim();
+        String folderPath = currentSession.getUsername() + "/" + scanner.nextLine().trim();
 
         if (folderPath.isEmpty()) {
             System.out.println("✗ Folder path cannot be empty.");
             return;
         }
+
+        String folderPathLocal = "/home/oshico/Projects/SD/data/" + folderPath;
+        File dir = new File(folderPathLocal);
+        if (dir.delete()) {
+            System.out.println("Folder deleted: " + folderPathLocal);
+        } else {
+            System.out.println("Folder does not exist: " + folderPathLocal);
+        }
+
 
         ArrayList<String> params = new ArrayList<>();
         params.add(folderPath);
