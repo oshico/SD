@@ -123,9 +123,9 @@ public class Database implements Serializable {
         if (!userSharedFolders.containsKey(username)) {
             userSharedFolders.put(username, new HashMap<>());
         }
-        Map<String, SubjectFileSystemRI> sharedFolders = new HashMap<>();
-        sharedFolders.put(owner, subjectFileSystem);
-        userSharedFolders.put(username, sharedFolders);
+
+        Map<String, SubjectFileSystemRI> existingSharedFolders = userSharedFolders.get(username);
+        existingSharedFolders.put(owner, subjectFileSystem);
         return true;
     }
 

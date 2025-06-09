@@ -55,20 +55,36 @@ public class SessionImpl extends UnicastRemoteObject implements SessionRI {
 
     @Override
     public void synchronizeSharedFolders() throws RemoteException {
+        System.out.println("=== SYNCHRONIZE DEBUG START ===");
+        System.out.println("Current user: " + this.username);
+
         Map<String, SubjectFileSystemRI> sharedFileSystems = database.getUserSharedFolders(this.username);
+
+        System.out.println("Shared file systems retrieved: " + (sharedFileSystems != null ? "not null" : "null"));
+        if (sharedFileSystems != null) {
+            System.out.println("Number of shared file systems: " + sharedFileSystems.size());
+            System.out.println("Owners: " + sharedFileSystems.keySet());
+        }
 
         if (sharedFileSystems != null && !sharedFileSystems.isEmpty()) {
             System.out.println("Synchronizing shared folders for user: " + this.username);
             System.out.println("Found " + sharedFileSystems.size() + " shared file systems");
 
             for (String ownerUsername : sharedFileSystems.keySet()) {
-                System.out.println("Synchronizing files from owner: " + ownerUsername);
-                createSharedFolderStructure(this.username, ownerUsername);
-                synchronizeFilesFromSharedUser(ownerUsername);
+                System.out.println("Processing owner: " + ownerUsername);
+                try {
+                    createSharedFolderStructure(this.username, ownerUsername);
+                    synchronizeFilesFromSharedUser(ownerUsername);
+                    System.out.println("Successfully synchronized files from: " + ownerUsername);
+                } catch (Exception e) {
+                    System.err.println("Failed to sync from " + ownerUsername + ": " + e.getMessage());
+                    e.printStackTrace();
+                }
             }
         } else {
             System.out.println("No shared file systems found for user: " + this.username);
         }
+        System.out.println("=== SYNCHRONIZE DEBUG END ===");
     }
 
     @Override
