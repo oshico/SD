@@ -4,6 +4,7 @@ out/
 !**/src/test/**/out/
 src/edu/ufp/inf/sd/rabbitmqservices/p02_workqueues/consumer/SMTPConfigsFrancisco.java
 data/
+test/
 
 
 ### Eclipse ###
