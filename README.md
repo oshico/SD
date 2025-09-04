@@ -32,6 +32,14 @@ Then, navigate into the folder:
  cd SD
 ```
 
+### ⚙️ Usage
+Run the scripts present for each class folder after changing the variables
+```bash
+ ./python
+ ./server 
+ ./client
+```
+
 ---
 
 ### ✅ License
