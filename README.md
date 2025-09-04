@@ -31,28 +31,17 @@ Then, navigate into the folder:
 ```bash
  cd SD
 ```
-Start exploring and contributing! 🎉
 
 ---
 
-## 🎯 Contribution Guidelines
-We encourage collaboration! Follow these simple steps:
-1. **Fork** the repository 🍴
-2. **Create a new branch** (`git checkout -b feature-branch`) 🌿
-3. **Commit your changes** (`git commit -m 'Added new content'`) 📌
-4. **Push to your branch** (`git push origin feature-branch`) 🚀
-5. **Open a Pull Request** 🛠
+### ✅ License
 
----
+**GNU General Public License — see LICENSE for details.**
 
+### ✍️ Author
 
-![Distributed Systems](https://lh5.googleusercontent.com/proxy/4wEHvz1q2O00yppV07k-pQI8PRgqTTgGHnLh5U-g_QMi5H-VhGZLhc-0sf1z8l9bNbMcpYmIpNw3K24v4nbWkbK607Exy5CWMu6c9A)
+**oshico & nunosilva24**
 
----
+### 📬 Feedback or Issues?
 
-## 📢 Stay Connected
-- 💬 Open an issue for doubts/questions
-- 📧 Contact us via email
-
-Let's learn together and build amazing distributed systems! 🌍✨
-
+**Open an issue or submit a pull request!**
