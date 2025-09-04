@@ -25,11 +25,11 @@ ___
 ## 🚀 Getting Started
 To clone this repository, run:
 ```bash
- git clone https://github.com/yourusername/distributed-systems-repo.git
+ git clone https://github.com/oshico/SD.git
 ```
 Then, navigate into the folder:
 ```bash
- cd distributed-systems-repo
+ cd SD
 ```
 Start exploring and contributing! 🎉
 
